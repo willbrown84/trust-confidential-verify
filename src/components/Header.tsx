@@ -1,4 +1,4 @@
-import { Shield, Wallet, User } from "lucide-react";
+import { Shield, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import trustSeal from "@/assets/trust-seal.png";
 
@@ -38,10 +38,6 @@ const Header = () => {
 
           {/* User Actions */}
           <div className="flex items-center gap-3">
-            <Button variant="connect" size="sm" className="gap-2">
-              <Wallet className="w-4 h-4" />
-              Connect Wallet
-            </Button>
             <Button variant="ghost" size="icon">
               <User className="w-4 h-4" />
             </Button>
