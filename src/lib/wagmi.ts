@@ -8,7 +8,7 @@ export const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'e08e9
 export const config = createConfig({
   chains: [sepolia, mainnet],
   connectors: [
-    // Use specific connectors to avoid conflicts with browser extensions
+    // Primary wallet connectors with specific targeting
     metaMask(),
     coinbaseWallet({
       appName: 'Trust Confidential Verify',
@@ -23,14 +23,24 @@ export const config = createConfig({
         icons: ['https://trust-confidential-verify.vercel.app/icon.svg']
       }
     }),
-    // Generic injected connector as fallback (but with lower priority)
+    // More specific injected connector to avoid conflicts
     injected({
-      target: 'metaMask', // Only target MetaMask to reduce conflicts
+      target() {
+        return {
+          id: 'injected',
+          name: 'Injected',
+          provider: typeof window !== 'undefined' ? window.ethereum : undefined,
+        }
+      },
     }),
   ],
   transports: {
     [sepolia.id]: http(import.meta.env.VITE_RPC_URL || 'https://sepolia.rpc.zama.ai'),
     [mainnet.id]: http(),
+  },
+  // Add batch configuration to reduce RPC calls
+  batch: {
+    multicall: true,
   },
 });
 

@@ -4,6 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/", // Ensure correct base path for Vercel
   server: {
     host: "::",
     port: 8080,
@@ -20,13 +21,19 @@ export default defineConfig({
     minify: "esbuild",
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separate vendor chunks to avoid conflicts
-          'wagmi': ['wagmi', '@wagmi/core', '@wagmi/connectors'],
-          'react': ['react', 'react-dom'],
-          'ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+        // Simplified chunking strategy
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('wagmi') || id.includes('@wagmi')) {
+              return 'wagmi';
+            }
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react';
+            }
+            return 'vendor';
+          }
         },
-        // Ensure consistent file naming
+        // Consistent file naming
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
@@ -34,6 +41,8 @@ export default defineConfig({
     },
     // Increase chunk size warning limit
     chunkSizeWarningLimit: 1000,
+    // Ensure assets are properly generated
+    assetsInlineLimit: 0,
   },
   // Optimize dependencies
   optimizeDeps: {
