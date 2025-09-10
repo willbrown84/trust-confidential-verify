@@ -8,7 +8,7 @@ export const config = createConfig({
     injected(),
     metaMask(),
     walletConnect({
-      projectId: 'YOUR_PROJECT_ID', // Get this from https://cloud.walletconnect.com/
+      projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'YOUR_PROJECT_ID', // Get this from https://cloud.walletconnect.com/
     }),
   ],
   transports: {
