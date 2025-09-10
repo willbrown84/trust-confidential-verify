@@ -24,11 +24,18 @@ export default defineConfig({
         // Simplified chunking strategy
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('wagmi') || id.includes('@wagmi')) {
+            // Keep React together to avoid context issues
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'react';
+            }
+            if (id.includes('wagmi') || id.includes('@wagmi') || id.includes('viem')) {
               return 'wagmi';
             }
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react';
+            if (id.includes('@tanstack')) {
+              return 'tanstack';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'radix';
             }
             return 'vendor';
           }
@@ -46,6 +53,17 @@ export default defineConfig({
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: ['wagmi', '@wagmi/core', '@wagmi/connectors'],
+    include: [
+      'react', 
+      'react-dom', 
+      'wagmi', 
+      '@wagmi/core', 
+      '@wagmi/connectors',
+      '@tanstack/react-query'
+    ],
+  },
+  // Ensure proper module resolution
+  define: {
+    global: 'globalThis',
   },
 });
