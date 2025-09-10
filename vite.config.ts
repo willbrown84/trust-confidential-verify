@@ -19,26 +19,14 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: false,
     minify: "esbuild",
+    // Simplified build configuration to avoid potential issues
     rollupOptions: {
       output: {
-        // Simplified chunking strategy
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            // Keep React together to avoid context issues
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'react';
-            }
-            if (id.includes('wagmi') || id.includes('@wagmi') || id.includes('viem')) {
-              return 'wagmi';
-            }
-            if (id.includes('@tanstack')) {
-              return 'tanstack';
-            }
-            if (id.includes('@radix-ui')) {
-              return 'radix';
-            }
-            return 'vendor';
-          }
+        // Basic chunking without complex logic
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'wagmi-vendor': ['wagmi', '@wagmi/core', '@wagmi/connectors', 'viem'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
         },
         // Consistent file naming
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -48,8 +36,6 @@ export default defineConfig({
     },
     // Increase chunk size warning limit
     chunkSizeWarningLimit: 1000,
-    // Ensure assets are properly generated
-    assetsInlineLimit: 0,
   },
   // Optimize dependencies
   optimizeDeps: {
@@ -58,12 +44,7 @@ export default defineConfig({
       'react-dom', 
       'wagmi', 
       '@wagmi/core', 
-      '@wagmi/connectors',
-      '@tanstack/react-query'
+      '@wagmi/connectors'
     ],
-  },
-  // Ensure proper module resolution
-  define: {
-    global: 'globalThis',
   },
 });
